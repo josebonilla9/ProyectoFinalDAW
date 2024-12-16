@@ -5,6 +5,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
+    font-weight: 300;
 }
 
 a{
@@ -199,14 +200,12 @@ body{
 
 .top-container .status .items-list .item .info p{
     font-size: 25px;
-    font-weight: 400;
     color: rgb(8, 198, 8);
 
 }
 
 .top-container .status .items-list .item:nth-child(3) .info p {
     font-size: 25px;
-    font-weight: 400;
     color: red
 }
 
@@ -219,7 +218,6 @@ body{
 
 .top-container .status .items-list .item:nth-child(4) .info .results p {
     font-size: 15px;
-    font-weight: 300;
     color: #031224;
     padding: 10px;
     text-align: right;
@@ -384,7 +382,6 @@ body{
     top: 20px; 
     right: 20px;
     color: #fff;
-    font-weight: 300;
     background-color: #031224;
     padding: 10px 48px;
     border: none;
@@ -412,7 +409,6 @@ body{
     min-height: 100px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-size: 14px;
-    font-weight: 300;
 }
 
 .task{
