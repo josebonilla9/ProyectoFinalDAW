@@ -2,7 +2,7 @@ const ctx = document.querySelector('.activity-chart');
 const ctx2 = document.querySelector('.prog-chart');
 
 window.onload = function () {
-    generateCalendar();
+    generateCalendar(currentMonth, currentYear);
 };
 
 new Chart(ctx, {
@@ -98,37 +98,59 @@ new Chart(ctx2, {
     }
 });
 
-// Function to generate the calendar
-function generateCalendar() {
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+let selectedDate = null;
+
+window.onload = function () {
+    generateCalendar(currentMonth, currentYear);
+};
+
+function generateCalendar(month, year) {
     const calendar = document.getElementById('calendar');
+    calendar.innerHTML = '';
 
-    // Create a new Date object to get the current date, month, and year
-    const currentDate = new Date();
-    const month = currentDate.getMonth();
-    const year = currentDate.getFullYear();
+    const monthYearDisplay = document.getElementById('calendar-month-year');
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    monthYearDisplay.textContent = `${monthNames[month]} ${year}`;
 
-    // Calculate the first and last day of the month
-    const firstDayOfMonth = new Date(year, month, 0);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
 
-    // Calculate the day of the week of the first day of the month
-    const firstDayOfWeek = firstDayOfMonth.getDay();
-    const totalDays = lastDayOfMonth.getDate();
-
-    // Add blank div elements for the days before the first day of the month
-    for (let i = 0; i < firstDayOfWeek; i++) {
+    for (let i = 0; i < firstDayOfMonth; i++) {
         let blankDay = document.createElement("div");
         calendar.appendChild(blankDay);
     }
 
-    // Add div elements for each day of the month
     for (let day = 1; day <= totalDays; day++) {
         let daySquare = document.createElement("div");
         daySquare.className = "calendar-day";
         daySquare.textContent = day;
         daySquare.id = `day-${day}`;
+        daySquare.addEventListener('click', function () {
+            selectedDate = new Date(year, month, day);
+            showAddTaskModal();
+        });
         calendar.appendChild(daySquare);
     }
+}
+
+function prevMonth() {
+    currentMonth--;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    }
+    generateCalendar(currentMonth, currentYear);
+}
+
+function nextMonth() {
+    currentMonth++;
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    }
+    generateCalendar(currentMonth, currentYear);
 }
 
 // Function to show the add task modal
@@ -143,19 +165,18 @@ function closeAddTaskModal() {
 
 // Function to add a task
 function addTrade() {
-    // Get task date and description from input fields
-    const taskDate = new Date(document.getElementById('task-date').value);
+    // Get task description from input field
     const taskDesc = document.getElementById('task-desc').value.trim();
 
-    // Validate task date and description
-    if (taskDesc && !isNaN(taskDate.getDate())) {
+    // Validate task description
+    if (taskDesc && selectedDate) {
         // Get calendar days
         const calendarDays = document.getElementById('calendar').children;
         // Iterate through calendar days
         for (let i = 0; i < calendarDays.length; i++) {
             const day = calendarDays[i];
-            // Check if day matches task date
-            if (parseInt(day.textContent) === taskDate.getDate()) {
+            // Check if day matches selected date
+            if (parseInt(day.textContent) === selectedDate.getDate()) {
                 // Create task element
                 const taskElement = document.createElement("div");
                 taskElement.className = "task";
@@ -168,8 +189,8 @@ function addTrade() {
         }
         closeAddTaskModal(); // Close add task modal
     } else {
-        // Alert if invalid date or task description
-        alert("Please enter a valid date and task description!");
+        // Alert if invalid task description
+        alert("Please enter a valid task description!");
     }
 }
 

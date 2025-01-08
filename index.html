@@ -101,22 +101,31 @@
 
     </div>
 
-
     <div class="bottom-container">
 
         <div class="planner">
+            <div class="header-container">
                 <h1>Trading Calendar</h1>
-                <button class="add-task-btn" onclick="showAddTaskModal()">Add Trade</button>
+                <div class="calendar-nav">
+                    <button onclick="prevMonth()">&#9664;</button>
+                    <span id="calendar-month-year"></span>
+                    <button onclick="nextMonth()">&#9654;</button>
+                </div>
+            </div>
+
+            <div class="monthly-stats">
+                <p>Monthly Stats: </p>
+                <span id="monthly-pl"></span>
+            </div>
+            
             <div id="calendar" class="calendar-grid"></div>
         </div>
-    
     
         <div id="addTaskModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeAddTaskModal()">&times;</span>
                 <h2>Add Trade</h2>
-                <input type="date" id="task-date">
-                <input type="text" id="task-desc" placeholder="Trade P&L" autocomplete="off">
+                <input type="text" id="task-desc" placeholder="Trade P&L">
                 <button onclick="addTrade()">Add Trade</button>
             </div>
         </div>

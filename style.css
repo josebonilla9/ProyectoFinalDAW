@@ -370,11 +370,37 @@ body{
     position: relative;
 }
 
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .planner h1 {
+    display: inline-block;
     color: #031224;
     text-align: left;
     font-weight: 200;
     width: fit-content;
+}
+
+.planner .calendar-nav button{
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #031224;
+    padding: 12px;
+}
+
+.planner .calendar-nav {
+    display: inline-block;
+    font-size: 20px;
+    text-align: right;
+}
+
+.planner .monthly-stats {
+    text-align: left;
 }
 
 .add-task-btn {
@@ -389,7 +415,6 @@ body{
     cursor: pointer;
     transition: all 0.3s ease;
 }
-
 
 .calendar-grid{
     display: grid;
@@ -409,6 +434,7 @@ body{
     min-height: 100px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-size: 14px;
+    cursor: pointer;
 }
 
 .task{
