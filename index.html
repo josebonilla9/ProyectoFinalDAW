@@ -124,9 +124,35 @@
         <div id="addTaskModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeAddTaskModal()">&times;</span>
-                <h2>Add Trade</h2>
-                <input type="text" id="task-desc" placeholder="Trade P&L">
+                <div class="modal-title">
+                    <span id="today-date"></span>
+                </div>
+                <div class="modal-inputs">
+                    <input type="text" class="modal-placeholder" id="instrument" placeholder="Instrument">
+                    <input type="text" class="modal-placeholder" id="contracts-traded" placeholder="Contracts Traded">
+                    <input type="text" class="modal-placeholder" id="commissions" placeholder="Commissions">
+                    <input type="text" class="modal-placeholder" id="trade-pl" placeholder="Trade P&L">
+                </div>
+
                 <button onclick="addTrade()">Add Trade</button>
+
+                <table class="modal-table" id="trades-table">
+                    <thead>
+                        <tr>
+                            <th>Instrument</th>
+                            <th>Contracts Traded</th>
+                            <th>Commissions</th>
+                            <th>Trade P&L</th>
+                            <th class="trash"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas se añadirán aquí -->
+                    </tbody>
+                </table>
+                <div class="modal-pl">
+                    <span id="today-pl"></span>
+                </div>
             </div>
         </div>
 

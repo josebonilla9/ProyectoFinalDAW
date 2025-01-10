@@ -124,12 +124,14 @@ function generateCalendar(month, year) {
 
     for (let day = 1; day <= totalDays; day++) {
         let daySquare = document.createElement("div");
+        const todayDateElement = document.getElementById('today-date');
         daySquare.className = "calendar-day";
         daySquare.textContent = day;
         daySquare.id = `day-${day}`;
         daySquare.addEventListener('click', function () {
             selectedDate = new Date(year, month, day);
             showAddTaskModal();
+            todayDateElement.textContent = `${monthNames[selectedDate.getMonth()]} ${selectedDate.getDate()}, ${selectedDate.getFullYear()}`;
         });
         calendar.appendChild(daySquare);
     }
@@ -153,85 +155,81 @@ function nextMonth() {
     generateCalendar(currentMonth, currentYear);
 }
 
-// Function to show the add task modal
 function showAddTaskModal() {
     document.getElementById('addTaskModal').style.display = 'block';
 }
 
-// Function to close the add task modal
 function closeAddTaskModal() {
     document.getElementById('addTaskModal').style.display = 'none';
 }
 
-// Function to add a task
-function addTrade() {
-    // Get task description from input field
-    const taskDesc = document.getElementById('task-desc').value.trim();
+let totalPL = 0;
 
-    // Validate task description
-    if (taskDesc && selectedDate) {
-        // Get calendar days
+function addTrade() {
+    const instrument = document.getElementById('instrument').value.trim();
+    const contractsTraded = document.getElementById('contracts-traded').value.trim();
+    const commissionsString = document.getElementById('commissions').value.trim();
+    const tradePLString = document.getElementById('trade-pl').value.trim();
+    
+    const commissions = parseFloat(commissionsString).toFixed(2);
+    const tradePL = parseFloat(tradePLString).toFixed(2);
+
+    if (isNaN(contractsTraded) || isNaN(commissions) || isNaN(tradePL)) {
+        alert("Please enter valid numbers for Contracts Traded, Commissions, and Trade P&L!");
+        return;
+    }
+
+    if (instrument && contractsTraded && commissions && tradePL && selectedDate) {
+        const tradesTable = document.getElementById('trades-table').getElementsByTagName('tbody')[0];
+        const newRow = tradesTable.insertRow();
+        newRow.insertCell(0).textContent = instrument;
+        newRow.insertCell(1).textContent = contractsTraded;
+        newRow.insertCell(2).textContent = commissions;
+        newRow.insertCell(3).textContent = tradePL;
+        newRow.insertCell(4).innerHTML = `<i class='bx bx-trash'></i>`;
+
+        totalPL += parseFloat(tradePLString);
+
+        document.getElementById('instrument').value = '';
+        document.getElementById('contracts-traded').value = '';
+        document.getElementById('commissions').value = '';
+        document.getElementById('trade-pl').value = '';
+
         const calendarDays = document.getElementById('calendar').children;
-        // Iterate through calendar days
         for (let i = 0; i < calendarDays.length; i++) {
             const day = calendarDays[i];
-            // Check if day matches selected date
             if (parseInt(day.textContent) === selectedDate.getDate()) {
-                // Create task element
-                const taskElement = document.createElement("div");
-                taskElement.className = "task";
-                taskElement.textContent = taskDesc;
+                let taskElement = day.querySelector('.task');
+                if (!taskElement) {
+                    taskElement = document.createElement("div");
+                    taskElement.className = "task";
+                    day.appendChild(taskElement);
+                }
+                taskElement.textContent = `$${formatPL(totalPL)}`;
 
-                // Append task element to day element
-                day.appendChild(taskElement);
+                day.classList.remove('positive-pl', 'negative-pl');
+                if (totalPL > 0) {
+                    day.classList.add('positive-pl');
+                } else if (totalPL < 0) {
+                    day.classList.add('negative-pl');
+                }
+
                 break;
             }
         }
-        closeAddTaskModal(); // Close add task modal
+        updateTotalPL();
     } else {
-        // Alert if invalid task description
-        alert("Please enter a valid task description!");
+        alert("Please fill in all fields!");
     }
 }
 
-function editDay() {
-    // Get task date and description from input fields
-    const taskDate = new Date(document.getElementById('task-date').value);
-    const taskDesc = document.getElementById('task-desc').value.trim();
+function updateTotalPL() {
+    document.getElementById('today-pl').textContent = `Total P&L: ${totalPL.toFixed(2)} USD`;
+}
 
-    // Validate task date and description
-    if (taskDesc && !isNaN(taskDate.getDate())) {
-        // Get calendar days
-        const calendarDays = document.getElementById('calendar').children;
-        // Iterate through calendar days
-        for (let i = 0; i < calendarDays.length; i++) {
-            const day = calendarDays[i];
-            // Check if day matches task date
-            if (parseInt(day.textContent) === taskDate.getDate()) {
-                // Create task element
-                const taskElement = document.createElement("div");
-                taskElement.className = "task";
-                taskElement.textContent = taskDesc;
-
-                // Add event listener for right-click to delete task
-                taskElement.addEventListener("contextmenu", function (event) {
-                    event.preventDefault(); // Prevent default context menu
-                    deleteTask(taskElement); // Call deleteTask function
-                });
-
-                // Add event listener for regular click to edit task
-                taskElement.addEventListener('click', function () {
-                    editTask(taskElement); // Call editTask function
-                });
-
-                // Append task element to day element
-                day.appendChild(taskElement);
-                break;
-            }
-        }
-        closeAddTaskModal(); // Close add task modal
-    } else {
-        // Alert if invalid date or task description
-        alert("Please enter a valid date and task description!");
+function formatPL(value) {
+    if (Math.abs(value) >= 1000) {
+        return (value / 1000).toFixed(2) + 'K';
     }
+    return value.toFixed(2);
 }
