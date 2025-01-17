@@ -49,55 +49,6 @@ new Chart(ctx, {
     }
 });
 
-new Chart(ctx2, {
-    type: 'line',
-    data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-        datasets: [{
-            label: 'Class GPA',
-            data: [6, 10, 8, 14, 6, 7, 4],
-            borderColor: '#0891b2',
-            tension: 0.4
-        },
-        {
-            label: 'Aver GPA',
-            data: [8, 6, 7, 6, 11, 8, 10],
-            borderColor: '#ca8a04',
-            tension: 0.4
-        }
-        ]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        scales: {
-            x: {
-                grid: {
-                    display: false,
-                }
-            },
-            y: {
-                ticks: {
-                    display: false
-                },
-                border: {
-                    display: false,
-                    dash: [5, 5]
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        animation: {
-            duration: 1000,
-            easing: 'easeInOutQuad',
-        }
-    }
-});
-
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 let selectedDate = null;
@@ -184,11 +135,12 @@ function addTrade() {
         const newRow = tradesTable.insertRow();
         newRow.insertCell(0).textContent = instrument;
         newRow.insertCell(1).textContent = contractsTraded;
-        newRow.insertCell(2).textContent = commissions;
-        newRow.insertCell(3).textContent = tradePL;
+        newRow.insertCell(2).textContent = `$` + commissions;
+        newRow.insertCell(3).textContent = `$` + tradePL;
         newRow.insertCell(4).innerHTML = `<i class='bx bx-trash'></i>`;
 
         totalPL += parseFloat(tradePLString);
+        monthlyPL += parseFloat(tradePLString);
 
         document.getElementById('instrument').value = '';
         document.getElementById('contracts-traded').value = '';

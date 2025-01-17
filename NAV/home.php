@@ -1,10 +1,13 @@
-<!DOCTYPE html>
+<?php
+    session_start();
+?>
 
+<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../CSS/style.css">
     <title>DailyTrading</title>
 </head>
 
@@ -30,16 +33,15 @@
 
                 <div class="profile">
                     <div class="info">
-                        <img src="assets/profile.png">
-                        <div>
-                            <a href="#">Alex Johnson</a>
-                            <p>Premium</p>
+                        <!-- <img src="../assets/profile.png"> -->
+                        <div class="user-button">
+                            <a href="#"><?php echo $_SESSION['user_name'] ?></a>
+                            <!-- <p>Premium</p> -->
                         </div>
                     </div>
                     <i class='bx bx-chevron-down'></i>
                 </div>
             </div>
-
         </div>
 
         <div class="status">
@@ -96,7 +98,6 @@
                     <canvas class="activity-chart"></canvas>
                 </div>
             </div>
-
         </div>
 
     </div>
@@ -114,8 +115,7 @@
             </div>
 
             <div class="monthly-stats">
-                <p>Monthly Stats: </p>
-                <span id="monthly-pl"></span>
+                <p>Monthly Stats: <span id="monthly-pl"></span></p>
             </div>
             
             <div id="calendar" class="calendar-grid"></div>
@@ -275,7 +275,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
+    <script src="../JS/script.js"></script>
 
 </body>
 

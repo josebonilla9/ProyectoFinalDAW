@@ -1,0 +1,12 @@
+Cosas que hacer:
+
+- Hacer que cada día tenga un addTrade distinto
+- Sumar todos los días del mes para añadir a Monthly Stats
+- Sumar por semana todos los días de la última semana para añadir a Weekly P&L
+- Poder añadir/cambiar el balance inicial
+- Sumar todos los días que se han añadido trades para el Net P&L
+- Sumar el balance inicial a Net P&L para obtener el total del Balance
+- Recoger los datos diarios de la última semana para meterlos en la gráfica
+- Obtener los datos de todos los días para añadirlos a las estadísticas
+
+- Añadir base de datos
