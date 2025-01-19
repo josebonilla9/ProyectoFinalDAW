@@ -1,6 +1,4 @@
-<?php
-    session_start();
-?>
+<?php include("../PHP/conection.php") ?>
 
 <!DOCTYPE html>
 <head>
@@ -8,41 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../CSS/style.css">
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css"/>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
     <title>DailyTrading</title>
 </head>
-
 <body>
+
+
 
     <div class="top-container">
 
-        <div class="nav">
-            <div class="logo">
-                <i class='bx bx-candles'></i>
-                <a href="#">DailyTrading</a>
-            </div>
-
-            <div class="nav-links">
-                <a href="#">Dashboard</a>
-                <a href="#">Statistics</a>
-                <a href="#">Blog</a>
-                <a href="#">Live</a>
-            </div>
-
-            <div class="right-section">
-                <i class='bx bx-bell'></i>
-
-                <div class="profile">
-                    <div class="info">
-                        <!-- <img src="../assets/profile.png"> -->
-                        <div class="user-button">
-                            <a href="#"><?php echo $_SESSION['user_name'] ?></a>
-                            <!-- <p>Premium</p> -->
-                        </div>
-                    </div>
-                    <i class='bx bx-chevron-down'></i>
-                </div>
-            </div>
-        </div>
+        <?php include("../PHP/validation.php") ?>
 
         <div class="status">
             <div class="header">
@@ -73,7 +48,6 @@
                             <h5>Weekly P&L</h5>
                             <p>$ (875.00)</p>
                         </div>
-                        
                     </div>
                 </div>
                 <div class="item">
@@ -104,7 +78,7 @@
 
     <div class="bottom-container">
 
-        <div class="planner">
+        <div class="planner" id="planner">
             <div class="header-container">
                 <h1>Trading Calendar</h1>
                 <div class="calendar-nav">
@@ -120,23 +94,24 @@
             
             <div id="calendar" class="calendar-grid"></div>
         </div>
-    
-        <div id="addTaskModal" class="modal">
-            <div class="modal-content">
+
+        <div id="addTaskModal" class="home-modal">
+            <div class="home-modal-content">
                 <span class="close" onclick="closeAddTaskModal()">&times;</span>
-                <div class="modal-title">
+                <div class="home-modal-title">
                     <span id="today-date"></span>
                 </div>
-                <div class="modal-inputs">
-                    <input type="text" class="modal-placeholder" id="instrument" placeholder="Instrument">
-                    <input type="text" class="modal-placeholder" id="contracts-traded" placeholder="Contracts Traded">
-                    <input type="text" class="modal-placeholder" id="commissions" placeholder="Commissions">
-                    <input type="text" class="modal-placeholder" id="trade-pl" placeholder="Trade P&L">
+                <div>
+                    <form class="home-modal-inputs" id="add-trade-form">
+                        <input type="text" class="home-modal-placeholder" id="instrument" placeholder="Instrument" name="trade_instrument">
+                        <input type="text" class="home-modal-placeholder" id="contracts-traded" placeholder="Contracts Traded" name="trade_contracts">
+                        <input type="text" class="home-modal-placeholder" id="commissions" placeholder="Commissions" name="trade_commissions">
+                        <input type="text" class="home-modal-placeholder" id="trade-pl" placeholder="Trade P&L" name="trade_pl">
+                    </form>
+                    <button type="button" class="input-button" id="input-button" onclick="sendData()">Add Trade</button>
                 </div>
 
-                <button onclick="addTrade()">Add Trade</button>
-
-                <table class="modal-table" id="trades-table">
+                <table class="home-modal-table" id="trades-table">
                     <thead>
                         <tr>
                             <th>Instrument</th>
@@ -146,134 +121,25 @@
                             <th class="trash"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="trades-table-body">
                         <!-- Las filas se añadirán aquí -->
                     </tbody>
                 </table>
+
+                <div id="pagination"></div>
+
                 <div class="modal-pl">
                     <span id="today-pl"></span>
                 </div>
             </div>
         </div>
 
-<!--
 
-        <div class="prog-status">
-            <div class="header">
-                <h4>Learning Progress</h4>
-                <div class="tabs">
-                    <a href="#" class="active">1Y</a>
-                    <a href="#">6M</a>
-                    <a href="#">3M</a>
-                </div>
-            </div>
 
-            <div class="details">
-                <div class="item">
-                    <h2>3.45</h2>
-                    <p>Current GPA</p>
-                </div>
-                <div class="separator"></div>
-                <div class="item">
-                    <h2>4.78</h2>
-                    <p>Class Average GPA</p>
-                </div>
-            </div>
+        <?php include("trading_view.php") ?>
 
-            <canvas class="prog-chart"></canvas>
 
-        </div>
-
-    -->
-
-        <div class="livechart">
-            <div class="charts">
-                <!-- TradingView Widget BEGIN -->
-
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    {
-                    "symbol": "NASDAQ:AAPL",
-                    "width": "100%",
-                    "height": "100%",
-                    "locale": "en",
-                    "dateRange": "12M",
-                    "colorTheme": "light",
-                    "isTransparent": true,
-                    "autosize": true,
-                    "largeChartUrl": ""
-                }
-                    </script>
-                </div>
-            </div>
-
-            <div class="charts">
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    {
-                    "symbol": "COINBASE:BTCUSD",
-                    "width": "100%",
-                    "height": "100%",
-                    "locale": "en",
-                    "dateRange": "12M",
-                    "colorTheme": "light",
-                    "isTransparent": true,
-                    "autosize": true,
-                    "largeChartUrl": ""
-                }
-                    </script>
-                </div>
-            </div>
-
-            <div class="charts">
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    {
-                    "symbol": "NASDAQ:TSLA",
-                    "width": "100%",
-                    "height": "100%",
-                    "locale": "en",
-                    "dateRange": "12M",
-                    "colorTheme": "light",
-                    "isTransparent": true,
-                    "autosize": true,
-                    "largeChartUrl": ""
-                }
-                    </script>
-                </div>
-            </div>
-
-            <div class="charts">
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    {
-                    "symbol": "OANDA:XAUUSD",
-                    "width": "100%",
-                    "height": "100%",
-                    "locale": "en",
-                    "dateRange": "12M",
-                    "colorTheme": "light",
-                    "isTransparent": true,
-                    "autosize": true,
-                    "largeChartUrl": ""
-                }
-                    </script>
-                
-                </div>
-                
-            </div>
-            <div class="tradingview-widget-copyright">
-                <a href="https://www.tradingview.com/" target="_blank">Track all markets on TradingView</a>
-                
-                <!-- TradingView Widget END -->
-            </div>
-        </div>
-    </div>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../JS/script.js"></script>
 

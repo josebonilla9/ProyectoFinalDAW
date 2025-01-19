@@ -55,3 +55,48 @@ $(document).ready(function() {
         }
     });
 });
+
+$('#edit-password').change(function() {
+    const newPasswordField = document.getElementById("new-password");
+    if ($(this).is(':checked')) {
+        newPasswordField.disabled = false;
+        newPasswordField.required = true;
+    } else {
+        newPasswordField.disabled = true;
+        newPasswordField.required = false;
+        newPasswordField.value = "";
+    }
+});
+
+$('#delete-account-check').change(function() {
+    const deleteButton = document.getElementById("delete-button");
+    if ($(this).is(':checked')) {
+        deleteButton.disabled = false;
+    } else {
+        deleteButton.disabled = true;
+    }
+});
+
+$('#update_button').click(function() {
+    var userData = $('#edit-form').serialize();
+
+    $.ajax({
+        url: '../PHP/update_user.php',
+        type: 'POST',
+        data: userData,
+
+        success: function(response) {
+
+            if (response == "1") {
+                alertify.success("User updated successfully");
+                $('#user-table').load('../NAV/user.php #user-table');
+                $('#edit-modal').modal("hide");
+                document.getElementById("current-password").value = "";
+                return;
+            } else if (response == "2") {
+                alertify.error("Incorrect password");
+                document.getElementById("current-password").value = "";
+            }
+        }
+    })
+});

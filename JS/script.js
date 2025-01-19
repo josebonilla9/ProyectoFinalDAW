@@ -82,6 +82,7 @@ function generateCalendar(month, year) {
         daySquare.addEventListener('click', function () {
             selectedDate = new Date(year, month, day);
             showAddTaskModal();
+            updateTradesTable();
             todayDateElement.textContent = `${monthNames[selectedDate.getMonth()]} ${selectedDate.getDate()}, ${selectedDate.getFullYear()}`;
         });
         calendar.appendChild(daySquare);
@@ -116,7 +117,7 @@ function closeAddTaskModal() {
 
 let totalPL = 0;
 
-function addTrade() {
+function sendData() {
     const instrument = document.getElementById('instrument').value.trim();
     const contractsTraded = document.getElementById('contracts-traded').value.trim();
     const commissionsString = document.getElementById('commissions').value.trim();
@@ -185,3 +186,115 @@ function formatPL(value) {
     }
     return value.toFixed(2);
 }
+
+function sendData() {
+    var userData = $('#add-trade-form').serialize();
+
+    date = new Date(selectedDate);
+    date = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
+
+    userData += "&trade_date=" + date;
+
+    $.ajax({
+        url: '../PHP/trades_add.php',
+        type: 'POST',
+        data: userData,
+
+        success: function(response) {
+
+            if (response == "1") {
+                alertify.success("Trade added successfully");
+                updateTradesTable();
+                clearForm();
+
+                return;
+            } else if (response == "2") {
+                alertify.error("Trade not added");
+                clearForm();
+            }
+        }
+    })
+}
+
+function clearForm() {
+    document.getElementById("instrument").value = "";
+    document.getElementById("contracts-traded").value = "";
+    document.getElementById("commissions").value = "";
+    document.getElementById("trade-pl").value = "";
+}
+
+var currentPage = 1;
+var recordsPerPage = 10;
+var tradesData = [];
+
+function updateTradesTable() {
+
+    var date = new Date(selectedDate);
+    var formattedDate = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
+
+    $.ajax({
+        url: '../PHP/trades_get.php',
+        type: 'GET',
+        data: { trade_date: formattedDate },
+        dataType: 'json',
+        success: function(response) {
+            tradesData = response;
+            renderTable();
+            renderPagination();
+        },
+    });
+}
+
+function renderTable() {
+    var tbody = $('#trades-table-body');
+    tbody.empty();
+    var start = (currentPage - 1) * recordsPerPage;
+    var end = start + recordsPerPage;
+    var pageData = tradesData.slice(start, end);
+
+    pageData.forEach(function(trade) {
+        var row = '<tr>' +
+            '<td>' + trade.instrument + '</td>' +
+            '<td>' + trade.contracts + '</td>' +
+            '<td>' + trade.commissions + '</td>' +
+            '<td>' + trade.trade_pl + '</td>' +
+            '<td><i class="bx bx-trash"></i></td>' +
+            '</tr>';
+        tbody.append(row);
+    });
+}
+
+function renderPagination() {
+    var pagination = $('#pagination');
+    pagination.empty();
+    var totalPages = Math.ceil(tradesData.length / recordsPerPage);
+
+    if (currentPage > 1) {
+        pagination.append('<button class="pagination-button" onclick="prevPage()">&#9664;</button>');
+    }
+
+    if (currentPage < totalPages) {
+        pagination.append('<button class="pagination-button" onclick="nextPage()">&#9654</button>');
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+        renderPagination();
+    }
+}
+
+function nextPage() {
+    var totalPages = Math.ceil(tradesData.length / recordsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+        renderPagination();
+    }
+}
+
+$(document).ready(function() {
+    updateTradesTable();
+});
