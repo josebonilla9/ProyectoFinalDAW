@@ -3,9 +3,8 @@ include ('conection.php');
 session_start();
 
 $user_name = $_SESSION['user_name'];
-$date = $_GET['trade_date'];
 
-$data = mysqli_query($conection, "SELECT trade_id, user_name, trade_date, instrument, contracts, commissions, trade_pl FROM trades WHERE user_name = '$user_name' AND trade_date = '$date'");
+$data = mysqli_query($conection, "SELECT trade_id, trade_date, trade_pl FROM trades WHERE user_name = '$user_name'");
 
 $trades = array();
 

@@ -40,7 +40,7 @@ if ($phone_verification > 0) {
     exit;
 }
 
-$insert = mysqli_query($conection, "INSERT INTO users (user_name, user_password, user_email, user_phone, user_role) VALUES ('$user_name', '$user_password', '$user_email', '$user_phone', 'client')");
+$insert = mysqli_query($conection, "INSERT INTO users (user_name, user_password, user_email, user_phone, user_role, initial_balance) VALUES ('$user_name', '$user_password', '$user_email', '$user_phone', 'client', 0)");
 
 if ($insert) {
     echo 

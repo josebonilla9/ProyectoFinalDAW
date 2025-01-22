@@ -386,24 +386,29 @@ body{
     text-align: left;
 }
 
-.add-task-btn {
-    position: absolute;
-    top: 20px; 
-    right: 20px;
-    color: #fff;
-    background-color: #031224;
-    padding: 10px 48px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
 .calendar-grid{
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 10px;
     padding: 20px;
+}
+
+.calendar-days-row {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.calendar-day-name {
+    align-items: center;
+    background-color: #fff;
+    color: #031224;
+    padding: 15px;
+    border-radius: 8px;
+    height: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
 }
 
 .calendar-day{
@@ -414,7 +419,7 @@ body{
     color: #031224;
     padding: 15px;
     border-radius: 8px;
-    min-height: 100px;
+    height: 100px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-size: 14px;
     cursor: pointer;
@@ -439,7 +444,7 @@ body{
     border-radius: 4px;
     text-align: center;
     word-break: break-word;
-    font-size: 15px;
+    font-size: 12px;
     width: 88%;
     transition: all 0.3s ease;
 }
@@ -512,13 +517,38 @@ body{
     cursor: pointer;
 }
 
-.modal-pl {
-    margin-top: 40px;
+.home-modal-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.today-date {
+    flex: 1;
+    text-align: left;
+   
+}
+
+.today-pl {
+    flex: 1;
+    text-align: center;
 }
 
 .close {
+    flex: 1;
+    text-align: right;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    text-decoration: none;
     cursor: pointer;
-  }
+    transition: all 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+}
 
 .home-modal-content .input-button{
     background-color: #212121;
@@ -529,21 +559,6 @@ body{
     border-radius: 14px;
     cursor: pointer;
     transition: all 0.3s ease;
-}
-
-.close{
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.close:hover,
-.close:focus{
-    color: #000;
 }
 
 input[type="date"],
@@ -574,6 +589,15 @@ input.error{
     width: 50%;
     margin: auto;
     text-align: center;
+}
+
+.pagination-button{
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #031224;
+    padding: 12px;
 }
 
 @media screen and (max-width: 1300px) {

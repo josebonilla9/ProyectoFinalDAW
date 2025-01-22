@@ -13,8 +13,6 @@
 </head>
 <body>
 
-
-
     <div class="top-container">
 
         <?php include("../PHP/validation.php") ?>
@@ -30,7 +28,7 @@
                     <div class="info">
                         <div>
                             <h5>Balance</h5>
-                            <p>$ 5,733.20</p>
+                            <p id="initial-balance"></p>
                         </div>
                     </div>
                 </div>
@@ -38,15 +36,15 @@
                     <div class="info">
                         <div>
                             <h5>Net P&L</h5>
-                            <p>$ 3,976.85</p>
+                            <p id="net-pl"></p>
                         </div>
                     </div>
                 </div>
                 <div class="item">
                     <div class="info">
                         <div class="info-text">
-                            <h5>Weekly P&L</h5>
-                            <p>$ (875.00)</p>
+                            <h5>Average P&L</h5>
+                            <p id="average-pl"></p>
                         </div>
                     </div>
                 </div>
@@ -60,10 +58,10 @@
                         </div>
 
                         <div class="results">
-                            <p>$876.44</p>
-                            <p>-$1,588.50</p>
-                            <p>$498.32</p>
-                            <p>-$233.09</p>
+                            <p id="best-day">$876.44</p>
+                            <p id="worst-day">-$1,588.50</p>
+                            <p id="winning-average">$498.32</p>
+                            <p id="losing-average">-$233.09</p>
                         </div>
                     </div>
                 </div>
@@ -97,9 +95,10 @@
 
         <div id="addTaskModal" class="home-modal">
             <div class="home-modal-content">
-                <span class="close" onclick="closeAddTaskModal()">&times;</span>
                 <div class="home-modal-title">
-                    <span id="today-date"></span>
+                    <span id="today-date" class="today-date"></span>
+                    <span id="today_pl" class="today-pl">Total P&L: 0.00 USD</span>
+                    <span class="close" onclick="closeAddTaskModal()">&times;</span>
                 </div>
                 <div>
                     <form class="home-modal-inputs" id="add-trade-form">
@@ -121,16 +120,11 @@
                             <th class="trash"></th>
                         </tr>
                     </thead>
-                    <tbody id="trades-table-body">
-                        <!-- Las filas se añadirán aquí -->
-                    </tbody>
+                    <tbody id="trades-table-body"></tbody>
                 </table>
 
                 <div id="pagination"></div>
-
-                <div class="modal-pl">
-                    <span id="today-pl"></span>
-                </div>
+        
             </div>
         </div>
 

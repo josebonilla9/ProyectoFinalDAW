@@ -28,9 +28,7 @@ if($current_password == $password){
 
         echo '1';
 
-
         $result = mysqli_query($conection, $update);
-
         exit;
     } else {
         $update = "UPDATE users SET 
