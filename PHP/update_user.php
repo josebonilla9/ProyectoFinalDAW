@@ -4,11 +4,11 @@ session_start();
 
 $email = $_POST['user_email_form'];
 $phone = $_POST['user_phone_form'];
+$initial_balance = $_POST['user_initial_balance_form'];
 $password = $_POST['user_password_form'];
 $new_password = $_POST['user_new_password_form'] ?? null;
 $current_password = "";
 $id = "";
-
 
 $user = $_SESSION['user_name'];
 
@@ -23,7 +23,8 @@ if($current_password == $password){
     if($new_password == null){
         $update = "UPDATE users SET 
         user_email = '$email', 
-        user_phone = '$phone' 
+        user_phone = '$phone', 
+        initial_balance = '$initial_balance'
         WHERE user_id = $id";
 
         echo '1';
@@ -34,7 +35,8 @@ if($current_password == $password){
         $update = "UPDATE users SET 
         user_password = '$new_password',
         user_email = '$email', 
-        user_phone = '$phone' 
+        user_phone = '$phone', 
+        initial_balance = '$initial_balance'
         WHERE user_id = $id";
 
         echo '1';

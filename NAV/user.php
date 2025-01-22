@@ -15,12 +15,9 @@
         <?php include("../PHP/validation.php") ?>
     </div>
 
-    <div>
-        <h1 class="welcome display-4 text-center my-5">Welcome <?php echo $_SESSION['user_name'] ?></h1>
-    </div>
 
     <div class="profile">
-        <h1 class="display-4 text-center my-5">User information</h1>
+        <p class="display-6 text-center my-5">User information</p>
         <div>
             <table class="table table-hover mx-auto text-center w-25" id="user-table">
                 <?php
@@ -40,6 +37,10 @@
                 <tr>
                     <th>Phone: </th>
                     <td><?php echo $row['user_phone'] ?></td>
+                </tr>
+                <tr>
+                    <th>Initial Balance: </th>
+                    <td><?php echo number_format($row['initial_balance'], 2, '.', ','); ?></td>
                 </tr>
 
                 <?php } ?>
@@ -81,6 +82,10 @@
                     <div>
                         <label for="recipient-name" class="col-form-label">Phone number:</label>
                         <input type="text" class="form-control" name="user_phone_form" value="<?php echo $row['user_phone'] ?>">
+                    </div>
+                    <div>
+                        <label for="recipient-name" class="col-form-label">Initial balance:</label>
+                        <input type="text" class="form-control" name="user_initial_balance_form" value="<?php echo $row['initial_balance'] ?>">
                     </div>
                     <div>
                         <label for="recipient-name" class="col-form-label">Current password:</label>
