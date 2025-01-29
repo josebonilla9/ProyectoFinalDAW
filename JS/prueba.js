@@ -14,7 +14,7 @@ function chartExecution() {
             setTimeout(() => {
                 daySquare.click();
                 closeAddTaskModal();
-            }, 50 * index);
+            }, 25 * index);
         });
     }, 0);
 }
@@ -259,29 +259,26 @@ function addCalendarTrades() {
     var selectedDateStr = selectedDate.getFullYear() + "-" + (selectedDate.getMonth() + 1).toString().padStart(2, '0') + "-" + selectedDate.getDate().toString().padStart(2, '0');
     var totalPL = 0.00;
     const calendarDays = document.getElementById('calendar').children;
-    let dailyPL = {};
-    let maxPL1 = -Infinity;
-    let minPL1 = Infinity;
+    let maxPL = -Infinity;
+    let minPL = Infinity;
     
 
     tradesPLData.forEach(function(trade) {
         const tradeDate = trade.trade_date.split(' ')[0];
-        const tradePL = parseFloat(trade.trade_pl); 
-
         if (tradeDate === selectedDateStr) {
             totalPL += parseFloat(trade.trade_pl);
         }
 
-        if (tradePL > maxPL1) {
-            maxPL1 = tradePL;
+        if (totalPL > maxPL) {
+            maxPL = totalPL;
         }
-        if (tradePL < minPL1) {
-            minPL1 = tradePL;
+        if (totalPL < minPL) {
+            minPL = totalPL;
         }
     });
 
-    document.getElementById('best-day').textContent = `${maxPL1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
-    document.getElementById('worst-day').textContent = `${minPL1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    document.getElementById('best-day').textContent = `${maxPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    document.getElementById('worst-day').textContent = `${minPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
 
     for (let i = 0; i < calendarDays.length; i++) {
         let day = calendarDays[i];
@@ -320,19 +317,17 @@ function addCalendarTrades() {
     let positivePLSum = 0.00;
     let negativePLSum = 0.00;
     let totalTrades = 0;
-    // let maxPL2 = -Infinity;
-    // let minPL2 = Infinity;
 
     tradesPLData.forEach(function(trade) {
         totalBalance += parseFloat(trade.trade_pl);
 
         const tradePL = parseFloat(trade.trade_pl);
 
-        // if (tradePL > maxPL2) {
-        //     maxPL2 = tradePL;
+        // if (tradePL > maxPL) {
+        //     maxPL = tradePL;
         // }
-        // if (tradePL < minPL2) {
-        //     minPL2 = tradePL;
+        // if (tradePL < minPL) {
+        //     minPL = tradePL;
         // }
 
         if (tradePL > 0) {

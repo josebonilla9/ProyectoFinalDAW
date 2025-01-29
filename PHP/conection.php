@@ -1,3 +1,3 @@
-<?php
-$conection = mysqli_connect("localhost", "root", "", "DailyTrading");
+<?php 
+$conection = mysqli_connect("localhost", "root", "", "DailyTrading") 
 ?>

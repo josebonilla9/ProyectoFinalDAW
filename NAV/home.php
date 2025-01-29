@@ -43,7 +43,7 @@
                 <div class="item">
                     <div class="info">
                         <div class="info-text">
-                            <h5>Average P&L</h5>
+                            <h5>Average Trade P&L</h5>
                             <p id="average-pl"></p>
                         </div>
                     </div>
