@@ -117,6 +117,7 @@
                             <th>Contracts Traded</th>
                             <th>Commissions</th>
                             <th>Trade P&L</th>
+                            <th>Total</th>
                             <th class="trash"></th>
                         </tr>
                     </thead>

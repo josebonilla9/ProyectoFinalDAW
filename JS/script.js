@@ -19,13 +19,13 @@ function chartExecution() {
     }, 0);
 }
 
-new Chart(ctx, {
+let myChart = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+        labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
         datasets: [{
             label: 'P&L',
-            data: [200, 225, 370, -190, 270, 0, 0],
+            data: [0, 0, 0, 0, 0, 0, 0],
             backgroundColor: '#1e293b',
             borderWidth: 3,
             borderRadius: 6,
@@ -46,6 +46,9 @@ new Chart(ctx, {
                 }
             },
             y: {
+                grid: {
+                    color: (context) => context.tick.value === 0 ? '#1e293b' : 'transparent'
+                },
                 ticks: {
                     display: false
                 }
@@ -202,23 +205,33 @@ function renderTable() {
     pageData.forEach(function(trade) {
         var commissions = parseFloat(trade.commissions);
         var trade_pl = parseFloat(trade.trade_pl);
+        var totalTradeResult = totalResult(trade);
 
-        var row = '<tr>' +
-            '<td>' + trade.instrument + '</td>' +
-            '<td>' + trade.contracts + '</td>' +
-            '<td>' + commissions.toFixed(2) + '</td>' +
-            '<td>' + trade_pl.toFixed(2) + '</td>' +
-            '<td><i class="bx bx-trash" onclick="removeTrade(' + trade.trade_id + ')"></i></td>' +
+        var row = 
+            '<tr>' +
+                '<td>' + trade.instrument + '</td>' +
+                '<td>' + trade.contracts + '</td>' +
+                '<td>' + commissions.toFixed(2) + '</td>' +
+                '<td>' + trade_pl.toFixed(2) + '</td>' +
+                '<td>' + totalTradeResult.toFixed(2) + '</td>' +
+                '<td><i class="bx bx-trash" onclick="removeTrade(' + trade.trade_id + ')"></i></td>' +
             '</tr>';
         tbody.append(row);
     });
+}
+
+function totalResult(trade){
+    var commissions = parseFloat(trade.commissions);
+    var trade_pl = parseFloat(trade.trade_pl);
+    
+    return (trade_pl - commissions);
 }
 
 function updateTotalPL() {
     var totalPL = 0.00;
 
     tradesData.forEach(function(trade) {
-        totalPL += parseFloat(trade.trade_pl);
+        totalPL += totalResult(trade);
     });
 
     document.getElementById('today_pl').textContent = `Total P&L: ${totalPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
@@ -251,37 +264,73 @@ function updateTradesCalendar() {
         success: function(response) {
             tradesPLData = response;
             addCalendarTrades();
+            updateChartWithLastWeekData(tradesPLData);
         },
     });
 }
 
 function addCalendarTrades() {
     var selectedDateStr = selectedDate.getFullYear() + "-" + (selectedDate.getMonth() + 1).toString().padStart(2, '0') + "-" + selectedDate.getDate().toString().padStart(2, '0');
-    var totalPL = 0.00;
     const calendarDays = document.getElementById('calendar').children;
-    let dailyPL = {};
-    let maxPL1 = -Infinity;
-    let minPL1 = Infinity;
+    let totalPL = 0.00, totalBalance = 0.00, positivePLSum = 0.00, negativePLSum = 0.00, monthlyPL = 0.00;
+    let positivePLDays = 0, negativePLDays = 0, totalTrades = 0;
+    let maxPL = -Infinity, minPL = Infinity;
+    let dailyPLMap = {};
     
-
     tradesPLData.forEach(function(trade) {
         const tradeDate = trade.trade_date.split(' ')[0];
-        const tradePL = parseFloat(trade.trade_pl); 
+        const tradePL = parseFloat(trade.trade_pl - trade.commissions);
+        const tradeMonth = new Date(tradeDate).getMonth();
+        const tradeYear = new Date(tradeDate).getFullYear();
+        totalBalance += tradePL;
 
         if (tradeDate === selectedDateStr) {
-            totalPL += parseFloat(trade.trade_pl);
+            totalPL += tradePL;
         }
 
-        if (tradePL > maxPL1) {
-            maxPL1 = tradePL;
+        if (!dailyPLMap[tradeDate]) {
+            dailyPLMap[tradeDate] = 0;
         }
-        if (tradePL < minPL1) {
-            minPL1 = tradePL;
+        dailyPLMap[tradeDate] += tradePL;
+
+        if (tradeMonth === selectedDate.getMonth() && tradeYear === selectedDate.getFullYear()) {
+            monthlyPL += parseFloat(trade.trade_pl - trade.commissions);
         }
+
+        totalTrades++;
     });
 
-    document.getElementById('best-day').textContent = `${maxPL1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
-    document.getElementById('worst-day').textContent = `${minPL1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    for (const date in dailyPLMap) {
+        const dailyPL = dailyPLMap[date];
+    
+        if (dailyPL > maxPL) {
+            maxPL = dailyPL;
+        }
+        if (dailyPL < minPL) {
+            minPL = dailyPL;
+        }
+
+        if (dailyPL > 0) {
+            positivePLSum += dailyPL;
+            positivePLDays++;
+        } else if (dailyPL < 0) {
+            negativePLSum += dailyPL;
+            negativePLDays++;
+        }
+    }
+
+    document.getElementById('best-day').textContent = `${maxPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    document.getElementById('worst-day').textContent = `${minPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+
+    let positivePLAverage = positivePLDays > 0 ? (positivePLSum / positivePLDays) : 0;
+    let negativePLAverage = negativePLDays > 0 ? (negativePLSum / negativePLDays) : 0;
+    let averagePL = totalTrades > 0 ? totalBalance / totalTrades : 0;
+
+    document.getElementById('winning-average').textContent = `${positivePLAverage.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    document.getElementById('losing-average').textContent = `${negativePLAverage.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+
+    document.getElementById('monthly-pl').textContent = `${monthlyPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    PLColorChange(monthlyPL, 'monthly-pl');
 
     for (let i = 0; i < calendarDays.length; i++) {
         let day = calendarDays[i];
@@ -300,65 +349,49 @@ function addCalendarTrades() {
         }
     }
 
-    let monthlyPL = 0.00;
-    tradesPLData.forEach(function(trade) {
-        const tradeDate = trade.trade_date.split(' ')[0];
-        const tradeMonth = new Date(tradeDate).getMonth();
-        const tradeYear = new Date(tradeDate).getFullYear();
-
-        if (tradeMonth === selectedDate.getMonth() && tradeYear === selectedDate.getFullYear()) {
-            monthlyPL += parseFloat(trade.trade_pl);
-        }
-    });
-
-    document.getElementById('monthly-pl').textContent = `${monthlyPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
-    PLColorChange(monthlyPL, 'monthly-pl');
-
-    let totalBalance = 0.00;
-    let positivePLDays = 0;
-    let negativePLDays = 0;
-    let positivePLSum = 0.00;
-    let negativePLSum = 0.00;
-    let totalTrades = 0;
-    // let maxPL2 = -Infinity;
-    // let minPL2 = Infinity;
-
-    tradesPLData.forEach(function(trade) {
-        totalBalance += parseFloat(trade.trade_pl);
-
-        const tradePL = parseFloat(trade.trade_pl);
-
-        // if (tradePL > maxPL2) {
-        //     maxPL2 = tradePL;
-        // }
-        // if (tradePL < minPL2) {
-        //     minPL2 = tradePL;
-        // }
-
-        if (tradePL > 0) {
-            positivePLDays++;
-            positivePLSum += tradePL;
-        } else if (tradePL < 0) {
-            negativePLDays++;
-            negativePLSum += tradePL;
-        }
-
-        totalTrades++;
-    });
-
-    let positivePLAverage = positivePLDays > 0 ? positivePLSum / positivePLDays : 0;
-    let negativePLAverage = negativePLDays > 0 ? negativePLSum / negativePLDays : 0;
-    let averagePL = totalTrades > 0 ? totalBalance / totalTrades : 0;
-
-    document.getElementById('winning-average').textContent = `${positivePLAverage.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
-    document.getElementById('losing-average').textContent = `${negativePLAverage.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
-
     getInitialBalance(totalBalance);
 
     document.getElementById('net-pl').textContent = `$${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     PLColorChange(totalBalance, 'net-pl');
     document.getElementById('average-pl').textContent = `$${averagePL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     PLColorChange(averagePL, 'average-pl');
+}
+
+function updateChartWithLastWeekData(tradesPLData) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Asegura que la hora sea 00:00:00
+    const lastWeek = new Date(today);
+    lastWeek.setDate(today.getDate() - 6); // Incluye hoy y los 6 días anteriores
+
+    let dailyPLMap = {
+        'Sun': 0, 'Mon': 0, 'Tue': 0, 'Wed': 0, 'Thu': 0, 'Fri': 0, 'Sat': 0
+    };
+
+    tradesPLData.forEach(trade => {
+        const tradeDate = new Date(trade.trade_date);
+        tradeDate.setHours(0, 0, 0, 0); // Normaliza la fecha del trade
+
+        const dayOfWeek = tradeDate.toLocaleDateString('en-US', { weekday: 'short' });
+        const tradePL = parseFloat(trade.trade_pl) - parseFloat(trade.commissions);
+
+        // Filtrar correctamente los trades de los últimos 7 días
+        if (tradeDate >= lastWeek && tradeDate <= today) {
+            dailyPLMap[dayOfWeek] += tradePL;
+        }
+    });
+
+    // Actualizar el gráfico con los nuevos datos
+    myChart.data.datasets[0].data = [
+        dailyPLMap['Sun'],
+        dailyPLMap['Mon'],
+        dailyPLMap['Tue'],
+        dailyPLMap['Wed'],
+        dailyPLMap['Thu'],
+        dailyPLMap['Fri'],
+        dailyPLMap['Sat']
+    ];
+    
+    myChart.update();
 }
 
 
