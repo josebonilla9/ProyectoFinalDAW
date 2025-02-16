@@ -96,7 +96,10 @@ function generateCalendar(month, year) {
         let taskElement = document.createElement("div");
         taskElement.className = "task";
         daySquare.appendChild(taskElement);
-        taskElement.textContent = `$${formatPL(totalPL)}`;
+
+        let tradesNumber = document.createElement("div");
+        tradesNumber.className = "number-of-trades";
+        daySquare.appendChild(tradesNumber);
 
         daySquare.id = `day-${day}`;
         daySquare.addEventListener('click', function () {
@@ -276,6 +279,7 @@ function addCalendarTrades() {
     let positivePLDays = 0, negativePLDays = 0, totalTrades = 0;
     let maxPL = -Infinity, minPL = Infinity;
     let dailyPLMap = {};
+    let trades = 0;
     
     tradesPLData.forEach(function(trade) {
         const tradeDate = trade.trade_date.split(' ')[0];
@@ -286,6 +290,7 @@ function addCalendarTrades() {
 
         if (tradeDate === selectedDateStr) {
             totalPL += tradePL;
+            trades++;
         }
 
         if (!dailyPLMap[tradeDate]) {
@@ -336,16 +341,29 @@ function addCalendarTrades() {
         let day = calendarDays[i];
 
         if (parseInt(day.textContent) === selectedDate.getDate()) {
-            let taskElement = day.querySelector('.task');
-            taskElement.textContent = `$${formatPL(totalPL)}`;
+            if (totalPL != 0) {
+                let taskElement = day.querySelector('.task');
+                taskElement.textContent = `$${formatPL(totalPL)}`;
 
-            day.classList.remove('positive-pl', 'negative-pl');
-            if (totalPL > 0) {
-                day.classList.add('positive-pl');
-            } else if (totalPL < 0) {
-                day.classList.add('negative-pl');
+                day.classList.remove('positive-pl', 'negative-pl');
+                if (totalPL > 0) {
+                    day.classList.add('positive-pl');
+                } else if (totalPL < 0) {
+                    day.classList.add('negative-pl');
+                }
+                break;
             }
-            break;
+        }
+    }
+
+    for (let i = 0; i < calendarDays.length; i++) {
+        let day = calendarDays[i];
+
+        if (parseInt(day.textContent) === selectedDate.getDate()) {
+            if (trades != 0) {
+                let tradesNumber = day.querySelector('.number-of-trades');
+                tradesNumber.textContent = trades + ' trades';
+            }
         }
     }
 
@@ -359,9 +377,9 @@ function addCalendarTrades() {
 
 function updateChartWithLastWeekData(tradesPLData) {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Asegura que la hora sea 00:00:00
+    today.setHours(0, 0, 0, 0);
     const lastWeek = new Date(today);
-    lastWeek.setDate(today.getDate() - 6); // Incluye hoy y los 6 días anteriores
+    lastWeek.setDate(today.getDate() - 6);
 
     let dailyPLMap = {
         'Sun': 0, 'Mon': 0, 'Tue': 0, 'Wed': 0, 'Thu': 0, 'Fri': 0, 'Sat': 0
@@ -369,18 +387,16 @@ function updateChartWithLastWeekData(tradesPLData) {
 
     tradesPLData.forEach(trade => {
         const tradeDate = new Date(trade.trade_date);
-        tradeDate.setHours(0, 0, 0, 0); // Normaliza la fecha del trade
+        tradeDate.setHours(0, 0, 0, 0);
 
         const dayOfWeek = tradeDate.toLocaleDateString('en-US', { weekday: 'short' });
         const tradePL = parseFloat(trade.trade_pl) - parseFloat(trade.commissions);
 
-        // Filtrar correctamente los trades de los últimos 7 días
         if (tradeDate >= lastWeek && tradeDate <= today) {
             dailyPLMap[dayOfWeek] += tradePL;
         }
     });
 
-    // Actualizar el gráfico con los nuevos datos
     myChart.data.datasets[0].data = [
         dailyPLMap['Sun'],
         dailyPLMap['Mon'],
