@@ -109,7 +109,7 @@ body{
 }
 
 .top-container .status{
-    padding: 20px 20px 10px;
+    padding: 0px 20px;
 }
 
 .top-container .status .header{
@@ -212,6 +212,13 @@ body{
     background: #031224;
     color: #f1f3f2;
     border-radius: 50%;
+}
+
+.top-container .status .items-list .item h4 {
+    text-align: center;
+    padding-bottom: 10px;
+    color: #55585c;
+    font-weight: 200;
 }
 
 .bottom-container{

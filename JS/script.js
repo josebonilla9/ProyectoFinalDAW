@@ -14,7 +14,7 @@ function chartExecution() {
             setTimeout(() => {
                 daySquare.click();
                 closeAddTaskModal();
-            }, 50 * index);
+            }, 30 * index);
         });
     }, 0);
 }

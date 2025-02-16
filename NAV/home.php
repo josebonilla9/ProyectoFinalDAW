@@ -18,10 +18,6 @@
         <?php include("../PHP/validation.php") ?>
 
         <div class="status">
-            <div class="header">
-                <h4 id="big"></h4>
-                <h4 id="small">Weekly Activity</h4>
-            </div>
 
             <div class="items-list">
                 <div class="item">
@@ -66,9 +62,14 @@
                     </div>
                 </div>
                 
+
                 <div class="item">
-                    <canvas class="activity-chart"></canvas>
+                    <h4 class="weekly-title">Weekly Activity</h4>
+                    <div class="weekly-chart">
+                        <canvas class="activity-chart"></canvas>
+                    </div>
                 </div>
+                
             </div>
         </div>
 
