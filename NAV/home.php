@@ -83,9 +83,9 @@
             <div class="header-container">
                 <h1>Trading Calendar</h1>
                 <div class="calendar-nav">
-                    <button onclick="prevMonth()">&#9664;</button>
+                    <button class="prevMonth">&#9664;</button>
                     <span id="calendar-month-year"></span>
-                    <button onclick="nextMonth()">&#9654;</button>
+                    <button class="nextMonth">&#9654;</button>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@
                 <div class="home-modal-title">
                     <span id="today-date" class="today-date"></span>
                     <span id="today_pl" class="today-pl">Total P&L: 0.00 USD</span>
-                    <span class="close" onclick="closeAddTaskModal()">&times;</span>
+                    <span class="close">&times;</span>
                 </div>
                 <div>
                     <form class="home-modal-inputs" id="add-trade-form">
@@ -110,7 +110,7 @@
                         <input type="text" class="home-modal-placeholder" id="commissions" placeholder="Commissions" name="trade_commissions">
                         <input type="text" class="home-modal-placeholder" id="trade-pl" placeholder="Trade P&L" name="trade_pl">
                     </form>
-                    <button type="button" class="input-button" id="input-button" onclick="sendData()">Add Trade</button>
+                    <button type="button" class="input-button" id="input-button">Add Trade</button>
                 </div>
 
                 <table class="home-modal-table" id="trades-table">
@@ -136,7 +136,7 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../JS/script.js"></script>
+    <script type="module" src="../JS/script.js"></script>
 
 </body>
 

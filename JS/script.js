@@ -1,7 +1,8 @@
-const ctx = document.querySelector('.activity-chart');
+import { initChart, myChart } from './bar-chart.js';
 
 window.onload = function () {
     chartExecution();
+    initChart();
 };
 
 function chartExecution() {
@@ -19,59 +20,11 @@ function chartExecution() {
     }, 0);
 }
 
-let myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-        datasets: [{
-            label: 'P&L',
-            data: [0, 0, 0, 0, 0, 0, 0],
-            backgroundColor: '#1e293b',
-            borderWidth: 3,
-            borderRadius: 6,
-            hoverBackgroundColor: '#60a5fa'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            x: {
-                border: {
-                    display: true
-                },
-                grid: {
-                    display: true,
-                    color: '#1e293b'
-                }
-            },
-            y: {
-                grid: {
-                    color: (context) => context.tick.value === 0 ? '#1e293b' : 'transparent'
-                },
-                ticks: {
-                    display: false
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        animation: {
-            duration: 1000,
-            easing: 'easeInOutQuad',
-        }
-    }
-});
-
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 let selectedDate = null;
 
 function generateCalendar(month, year) {
-    var totalPL = 0.00;
     const calendar = document.getElementById('calendar');
     calendar.innerHTML = '';
 
@@ -115,6 +68,7 @@ function generateCalendar(month, year) {
     }
 }
 
+document.querySelector('.prevMonth').addEventListener('click', prevMonth);
 function prevMonth() {
     currentMonth--;
     if (currentMonth < 0) {
@@ -124,6 +78,7 @@ function prevMonth() {
     chartExecution();
 }
 
+document.querySelector('.nextMonth').addEventListener('click', nextMonth);
 function nextMonth() {
     currentMonth++;
     if (currentMonth > 11) {
@@ -137,12 +92,14 @@ function showAddTaskModal() {
     document.getElementById('addTaskModal').style.display = 'block';
 }
 
+document.querySelector('.close').addEventListener('click', closeAddTaskModal);
 function closeAddTaskModal() {
     document.getElementById('addTaskModal').style.display = 'none';
 }
 
+document.querySelector('.input-button').addEventListener('click', sendData);
 function sendData() {
-    let userData = $('#add-trade-form').serialize();
+    var userData = $('#add-trade-form').serialize();
 
     let date = new Date(selectedDate);
     date = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
@@ -178,8 +135,6 @@ function clearForm() {
     document.getElementById("trade-pl").value = "";
 }
 
-var currentPage = 1;
-var recordsPerPage = 10;
 var tradesData = [];
 
 function updateTradesTable() {
@@ -217,7 +172,7 @@ function renderTable() {
                 '<td>' + commissions.toFixed(2) + '</td>' +
                 '<td>' + trade_pl.toFixed(2) + '</td>' +
                 '<td>' + totalTradeResult.toFixed(2) + '</td>' +
-                '<td><i class="bx bx-trash" onclick="removeTrade(' + trade.trade_id + ')"></i></td>' +
+                '<td><i class="bx bx-trash remove-trade" data-id="' + trade.trade_id + '"></i></td>' +
             '</tr>';
         tbody.append(row);
     });
@@ -240,6 +195,13 @@ function updateTotalPL() {
     document.getElementById('today_pl').textContent = `Total P&L: ${totalPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     PLColorChange(totalPL, 'today_pl');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('table').addEventListener('click', function(event) {
+        const tradeId = event.target.getAttribute('data-id');
+        removeTrade(tradeId);
+    });
+});
 
 function removeTrade(id) {
     $.ajax({
@@ -273,9 +235,7 @@ function updateTradesCalendar() {
 }
 
 function addCalendarTrades() {
-    // let selectedDateStr = selectedDate.getFullYear() + "-" + (selectedDate.getMonth() + 1).toString().padStart(2, '0') + "-" + selectedDate.getDate().toString().padStart(2, '0');
-
-    let selectedDateStr = new Date(selectedDate);
+    var selectedDateStr = selectedDate.getFullYear() + "-" + (selectedDate.getMonth() + 1).toString().padStart(2, '0') + "-" + selectedDate.getDate().toString().padStart(2, '0');
     const calendarDays = document.getElementById('calendar').children;
     let totalPL = 0.00, totalBalance = 0.00, positivePLSum = 0.00, negativePLSum = 0.00, monthlyPL = 0.00;
     let positivePLDays = 0, negativePLDays = 0, totalTrades = 0, totalDays = 0;
@@ -300,7 +260,7 @@ function addCalendarTrades() {
         }
         dailyPLMap[tradeDate] += tradePL;
 
-        if (tradeMonth === selectedDateStr.getMonth() && tradeYear === selectedDateStr.getFullYear()) {
+        if (tradeMonth === selectedDate.getMonth() && tradeYear === selectedDate.getFullYear()) {
             monthlyPL += parseFloat(trade.trade_pl - trade.commissions);
         }
 
@@ -455,7 +415,3 @@ function PLColorChange(value, id_name) {
         document.getElementById(id_name).style.color = 'red';
     }
 }
-
-// $(document).ready(function() {
-//     updateTradesTable();
-// });
