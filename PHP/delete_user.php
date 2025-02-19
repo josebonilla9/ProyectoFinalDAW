@@ -9,18 +9,22 @@ $password_delete_rpt = $_POST['user_password_delete_rpt'];
 
 $user = $_SESSION['user_name'];
 
-$data = mysqli_query($conection, "SELECT * FROM users WHERE user_name = '$user'");
+$query = "SELECT user_id, user_password FROM users WHERE user_name = ?";
+$stmt = $conection->prepare($query);
+$stmt->bind_param("s", $user);
+$stmt->execute();
+$result = $stmt->get_result();
+$userData = $result->fetch_assoc();
 
-while($row = mysqli_fetch_array($data)){
-    $password = $row['user_password'];
-    $user_name = $row['user_name'];
-    $user_id = $row['user_id'];
-}
+$stored_password = $userData['user_password'];
+$user_id = $userData['user_id'];
 
 if($password_delete == $password_delete_rpt){
-    if($password_delete == $password){
-        $delete = "DELETE FROM users WHERE user_id = '$user_id' AND user_name = '$user_name'";
-        $result = mysqli_query($conection, $delete);
+    if($password_delete == $stored_password){
+        $deleteQuery = "DELETE FROM users WHERE user_id = ? AND user_name = ?";
+        $deleteStmt = $conection->prepare($deleteQuery);
+        $deleteStmt->bind_param("is", $user_id, $user);
+        $deleteStmt->execute();
         
         echo "<script>
         alert('Account deleted successfully!')
@@ -39,5 +43,7 @@ if($password_delete == $password_delete_rpt){
     </script>";
 }
 
-mysqli_close($conection);
+$stmt->close();
+$deleteStmt->close();
+$conection->close();
 ?>

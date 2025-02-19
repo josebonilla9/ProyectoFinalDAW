@@ -12,9 +12,13 @@ $id = "";
 
 $user = $_SESSION['user_name'];
 
-$data = mysqli_query($conection, "SELECT * FROM users WHERE user_name = '$user'");
+$data = $conection->prepare("SELECT * FROM users WHERE user_name = ?");
+$data->bind_param("s", $user, $date);
+$data->execute();
 
-while($row = mysqli_fetch_array($data)){
+$dataResult = $data->get_result();
+
+while($row = $dataResult->fetch_assoc()){
     $current_password = $row['user_password'];
     $id = $row['user_id'];
 }
@@ -48,6 +52,6 @@ if($current_password == $password){
     echo '2';
 }
 
-mysqli_close($conection);
+$conection->close();
 
 ?>

@@ -14,7 +14,7 @@ function chartExecution() {
             setTimeout(() => {
                 daySquare.click();
                 closeAddTaskModal();
-            }, 30 * index);
+            }, 50 * index);
         });
     }, 0);
 }
@@ -142,9 +142,9 @@ function closeAddTaskModal() {
 }
 
 function sendData() {
-    var userData = $('#add-trade-form').serialize();
+    let userData = $('#add-trade-form').serialize();
 
-    date = new Date(selectedDate);
+    let date = new Date(selectedDate);
     date = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
 
     userData += "&trade_date=" + date;
@@ -273,10 +273,12 @@ function updateTradesCalendar() {
 }
 
 function addCalendarTrades() {
-    var selectedDateStr = selectedDate.getFullYear() + "-" + (selectedDate.getMonth() + 1).toString().padStart(2, '0') + "-" + selectedDate.getDate().toString().padStart(2, '0');
+    // let selectedDateStr = selectedDate.getFullYear() + "-" + (selectedDate.getMonth() + 1).toString().padStart(2, '0') + "-" + selectedDate.getDate().toString().padStart(2, '0');
+
+    let selectedDateStr = new Date(selectedDate);
     const calendarDays = document.getElementById('calendar').children;
     let totalPL = 0.00, totalBalance = 0.00, positivePLSum = 0.00, negativePLSum = 0.00, monthlyPL = 0.00;
-    let positivePLDays = 0, negativePLDays = 0, totalTrades = 0;
+    let positivePLDays = 0, negativePLDays = 0, totalTrades = 0, totalDays = 0;
     let maxPL = -Infinity, minPL = Infinity;
     let dailyPLMap = {};
     let trades = 0;
@@ -298,7 +300,7 @@ function addCalendarTrades() {
         }
         dailyPLMap[tradeDate] += tradePL;
 
-        if (tradeMonth === selectedDate.getMonth() && tradeYear === selectedDate.getFullYear()) {
+        if (tradeMonth === selectedDateStr.getMonth() && tradeYear === selectedDateStr.getFullYear()) {
             monthlyPL += parseFloat(trade.trade_pl - trade.commissions);
         }
 
@@ -322,6 +324,8 @@ function addCalendarTrades() {
             negativePLSum += dailyPL;
             negativePLDays++;
         }
+    
+        totalDays++;
     }
 
     document.getElementById('best-day').textContent = `${maxPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
@@ -330,9 +334,13 @@ function addCalendarTrades() {
     let positivePLAverage = positivePLDays > 0 ? (positivePLSum / positivePLDays) : 0;
     let negativePLAverage = negativePLDays > 0 ? (negativePLSum / negativePLDays) : 0;
     let averagePL = totalTrades > 0 ? totalBalance / totalTrades : 0;
+    let dayAverage = totalTrades > 0 ? totalBalance / totalDays : 0;
 
     document.getElementById('winning-average').textContent = `${positivePLAverage.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     document.getElementById('losing-average').textContent = `${negativePLAverage.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+
+    document.getElementById('daily-average').textContent = `${dayAverage.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    
 
     document.getElementById('monthly-pl').textContent = `${monthlyPL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
     PLColorChange(monthlyPL, 'monthly-pl');
@@ -410,7 +418,6 @@ function updateChartWithLastWeekData(tradesPLData) {
     myChart.update();
 }
 
-
 function formatPL(value) {
     if (Math.abs(value) >= 1000) {
         return (value / 1000).toFixed(2) + 'K';
@@ -435,8 +442,6 @@ function getInitialBalance(value) {
             balance = initialBalance + value;
 
             document.getElementById('initial-balance').textContent = `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
-            PLColorChange(balance, 'initial-balance');
         },
     });
 }
@@ -451,7 +456,6 @@ function PLColorChange(value, id_name) {
     }
 }
 
-$(document).ready(function() {
-    updateTradesTable();
-    getInitialBalance();
-});
+// $(document).ready(function() {
+//     updateTradesTable();
+// });

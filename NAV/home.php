@@ -47,6 +47,7 @@
                 <div class="item">
                     <div class="info">
                         <div class="titles">
+                            <p>Average Day P&L</p>
                             <p>Best Day</p>
                             <p>Worst Day</p>
                             <p>Avg. Winning Day</p>
@@ -54,6 +55,7 @@
                         </div>
 
                         <div class="results">
+                            <p id="daily-average">$1,234.56</p>
                             <p id="best-day">$876.44</p>
                             <p id="worst-day">-$1,588.50</p>
                             <p id="winning-average">$498.32</p>
@@ -115,8 +117,8 @@
                     <thead>
                         <tr>
                             <th>Instrument</th>
-                            <th>Contracts Traded</th>
-                            <th>Commissions</th>
+                            <th title="Contracts Traded">Contracts Traded</th>
+                            <th title="Commissions">Commissions</th>
                             <th>Trade P&L</th>
                             <th>Total</th>
                             <th class="trash"></th>
@@ -130,10 +132,7 @@
             </div>
         </div>
 
-
-
         <?php include("trading_view.php") ?>
-
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

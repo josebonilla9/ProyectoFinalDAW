@@ -4,16 +4,18 @@ session_start();
 
 $user_name = $_SESSION['user_name'];
 
-$result = mysqli_query($conection, "SELECT initial_balance FROM users WHERE user_name = '$user_name'");
+$result = $conection->prepare("SELECT initial_balance FROM users WHERE user_name = ?");
+$result->bind_param("s", $user_name);
+$result->execute();
 
-
-$result = mysqli_query($conection, "SELECT initial_balance FROM users WHERE user_name = '$user_name'");
+$data = $result->get_result();
 
 if ($result) {
-    $row = mysqli_fetch_assoc($result);
+    $row = $data->fetch_assoc();
     
     echo json_encode([$row]);
 }
 
-mysqli_close($conection);
+$conection->close();
+
 ?>

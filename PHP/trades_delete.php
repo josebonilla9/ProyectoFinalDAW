@@ -4,9 +4,11 @@ session_start();
 
 $id = $_POST['id'];
 
-$delete = mysqli_query($conection, "DELETE FROM trades WHERE trade_id = '$id'");
+$delete = $conection->prepare("DELETE FROM trades WHERE trade_id = ?");
+$delete->bind_param("s", $id);
+$delete->execute();
 
-if ($delete == 1) {
+if ($delete->execute()) {
     echo '1';
     exit();
 } else {
@@ -14,6 +16,6 @@ if ($delete == 1) {
     exit();
 }
 
-mysqli_close($conection);
+$conection->close();
 
 ?>
