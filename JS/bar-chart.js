@@ -20,33 +20,11 @@ export function initChart() {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: {
-                    border: {
-                        display: true
-                    },
-                    grid: {
-                        display: true,
-                        color: '#1e293b'
-                    }
-                },
-                y: {
-                    grid: {
-                        color: (context) => context.tick.value === 0 ? '#1e293b' : 'transparent'
-                    },
-                    ticks: {
-                        display: false
-                    }
-                }
+                x: {border: {display: true}, grid: {display: true, color: '#1e293b' }},
+                y: {grid: {color: (context) => context.tick.value === 0 ? '#1e293b' : 'transparent'}, ticks: {display: false}}
             },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            animation: {
-                duration: 1000,
-                easing: 'easeInOutQuad',
-            }
+            plugins: {legend: {display: false}},
+            animation: {duration: 1000, easing: 'easeInOutQuad',}
         }
     });
 }

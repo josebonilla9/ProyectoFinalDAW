@@ -198,6 +198,9 @@ function updateTotalPL() {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('table').addEventListener('click', function(event) {
+        if (!event.target.classList.contains('remove-trade')) {
+            return;
+        }
         const tradeId = event.target.getAttribute('data-id');
         removeTrade(tradeId);
     });
